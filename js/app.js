@@ -51,7 +51,16 @@ function handleLogout() {
   localStorage.removeItem("userInfo");
 
   // 轉導到登入頁 
-  window.location.href = '/index.html';
+  window.location.href = '../index.html';
+}
+// 廠商登出
+function handlePartnersPLogout() {
+  // 清除資料
+  localStorage.removeItem("token");
+  localStorage.removeItem("userInfo");
+
+  // 轉導到登入頁 
+  window.location.href = '../../index.html';
 }
 
 
