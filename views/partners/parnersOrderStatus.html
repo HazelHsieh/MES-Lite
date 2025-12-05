@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MES Lite - 工單狀態執行</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+
+  <style>
+    /* 保持一致的捲軸樣式 */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1a222c;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #3d4d63;
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+
+    .sidebar-transition {
+      transition: width 0.3s ease-in-out;
+    }
+
+    /* 步驟連接線動畫 */
+    .step-line {
+      position: absolute;
+      top: 2rem;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #334155;
+      z-index: 0;
+    }
+
+    .step-line-active {
+      background-color: #3b82f6;
+    }
+  </style>
+</head>
+
+<body class="bg-dark-900 text-gray-300 h-screen flex overflow-hidden selection:bg-brand-blue selection:text-white">
+  <aside id="sidebar"
+    class="sidebar-transition w-64 bg-vendor-sidebar flex flex-col shrink-0 relative border-r border-dark-600 z-20">
+
+    <button onclick="toggleSidebar()"
+      class="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-dark-600 border border-gray-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 hover:border-blue-600 transition shadow-lg cursor-pointer z-50 group">
+      <span id="toggleIcon" class="mdi mdi-chevron-left text-sm group-hover:scale-110 transition"></span>
+    </button>
+
+    <div class="h-16 flex items-center px-5 border-b bg-vendor-bg overflow-hidden whitespace-nowrap">
+      <a href="">
+        <span class="mdi mdi-factory text-xl text-blue-400 mr-3 shrink-0"></span>
+        <span class="nav-text font-bold text-lg text-white tracking-wider">MES Lite</span>
+        <span class="nav-text text-xs text-white ml-2 mt-1 border border-slate-200 px-1 rounded">廠商版</span>
+
+      </a>
+    </div>
+
+    <nav class="flex-1 py-4 overflow-y-auto overflow-x-hidden space-y-1">
+      <a href="#"
+        class="flex items-center px-5 py-3 hover:bg-dark-600 hover:text-white transition group overflow-hidden whitespace-nowrap">
+        <span class="mdi mdi-clipboard-text-outline text-xl mr-3 shrink-0 group-hover:text-blue-400 transition"></span>
+        <span class="nav-text">訂單工單</span>
+      </a>
+      <a href="#"
+        class="flex items-center px-5 py-3 hover:bg-dark-600 hover:text-white transition group overflow-hidden whitespace-nowrap">
+        <span class="mdi mdi-clipboard-text-outline text-xl mr-3 shrink-0 group-hover:text-blue-400 transition"></span>
+        <span class="nav-text">歷史訂單工單</span>
+      </a>
+      <a href="#"
+        class="flex items-center px-5 py-3 hover:bg-dark-600 hover:text-white transition group overflow-hidden whitespace-nowrap">
+        <span class="mdi mdi-file-document-outline text-xl mr-3 shrink-0 group-hover:text-blue-400 transition"></span>
+        <span class="nav-text">操作日誌</span>
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-dark-600 bg-dark-800/50 overflow-hidden whitespace-nowrap">
+      <div class="flex items-center">
+        <div class="w-10 h-10 rounded bg-teal-600 flex items-center justify-center text-white shrink-0 shadow-lg">
+          <span class="mdi mdi-store"></span>
+        </div>
+        <div class="ml-3 nav-text">
+          <div class="text-sm font-bold text-white">廠商 B</div>
+          <div class="text-xs text-gray-500">MES Lite</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-dark-900">
+    <header
+      class="h-16 bg-vendor-bg border-b border-dark-600 flex items-center justify-between px-6 shadow-md z-50 relative">
+      <h1></h1>
+
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <button id="notif-btn"
+            class="relative p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded-full transition focus:outline-none">
+            <span class="mdi mdi-bell-outline text-xl"></span>
+            <span class="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-dark-800"></span>
+          </button>
+
+          <div id="notif-menu"
+            class="hidden absolute right-0 mt-3 w-80 bg-dark-800 border border-dark-600 rounded-lg shadow-xl overflow-hidden z-50">
+            <div class="px-4 py-3 border-b border-dark-600 text-white font-bold">
+              通知中心
+            </div>
+
+            <ul class="max-h-64 overflow-y-auto">
+              <li class="px-4 py-3 hover:bg-dark-700 cursor-pointer border-b border-dark-600/50">
+                <div class="flex justify-between items-start">
+                  <span class="text-sm text-gray-200 font-medium">新訂單 #12345 已建立</span>
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mt-1.5"></span>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">5 分鐘前</div>
+              </li>
+
+              <li class="px-4 py-3 hover:bg-dark-700 cursor-pointer border-b border-dark-600/50">
+                <div class="flex justify-between items-start">
+                  <span class="text-sm text-gray-200 font-medium">生產線 A 即將完成</span>
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mt-1.5"></span>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">15 分鐘前</div>
+              </li>
+
+              <li class="px-4 py-3 hover:bg-dark-700 cursor-pointer">
+                <div class="flex justify-between items-start">
+                  <span class="text-sm text-gray-400">物料庫存低於安全值</span>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">1 小時前</div>
+              </li>
+            </ul>
+
+            <div class="border-t border-dark-600">
+              <button class="w-full py-2 text-sm text-teal-400 hover:text-teal-300 hover:bg-dark-700 transition">
+                查看全部通知
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div id="user-btn"
+            class="flex items-center gap-2 cursor-pointer hover:bg-dark-700 p-1.5 rounded-lg transition select-none">
+            <div class="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm">
+              <span class="mdi mdi-account"></span>
+            </div>
+            <span class="text-sm text-gray-300">廠商 B</span>
+            <span class="mdi mdi-chevron-down text-gray-500 transition-transform duration-200" id="user-chevron"></span>
+          </div>
+
+          <div id="user-menu"
+            class="hidden absolute right-0 mt-3 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl overflow-hidden z-50">
+            <ul class="py-1">
+              <li>
+                <a href="#"
+                  class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white">
+                  <span class="mdi mdi-lock-outline mr-2 text-lg"></span>
+                  修改密碼
+                </a>
+              </li>
+              <li>
+                <button onclick="handleLogout()"
+                  class="w-full flex items-center px-4 py-2 text-sm text-red-500 hover:bg-dark-700 hover:text-red-400 text-left">
+                  <span class="mdi mdi-logout mr-2 text-lg"></span>
+                  登出
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="h-16 bg-dark-800 border-b border-dark-700 flex gap-4 items-center px-6 shadow-md z-10">
+      <a href="/views/partners/partnersMain.html"
+        class="p-1 rounded-full hover:bg-dark-700 transition cursor-pointer flex items-center justify-center">
+        <span class="mdi mdi-arrow-left text-xl"></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <div>
+          <h1 class="text-lg font-bold text-white flex items-center gap-2">
+            WO-20231205-B
+            <span
+              class="px-2 py-0.5 rounded text-xs font-normal bg-brand-blue/20 text-brand-blue border border-brand-blue/30">生產中</span>
+          </h1>
+          <p class="text-xs text-gray-500">產品：散熱模組 Type-C | 廠商 C (CNC加工)</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+      <div class="flex justify-between items-center relative mb-10 px-4">
+        <div class="absolute top-1/2 left-0 w-full h-1 bg-dark-700 -z-10 rounded"></div>
+        <div class="absolute top-1/2 left-0 w-1/2 h-1 bg-brand-blue -z-10 rounded"></div>
+
+        <div class="flex flex-col items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full bg-dark-900 border-2 border-green-500 text-green-500 flex items-center justify-center shadow-lg relative z-10">
+            <span class="mdi mdi-check"></span>
+          </div>
+          <span class="text-xs text-green-500 font-bold">上游進行中</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full bg-dark-900 border-2 border-green-500 text-green-500 flex items-center justify-center shadow-lg relative z-10">
+            <span class="mdi mdi-check"></span>
+          </div>
+          <span class="text-xs text-green-500 font-bold">上游已出貨</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full bg-dark-900 border-2 border-green-500 text-green-500 flex items-center justify-center shadow-lg relative z-10">
+            <span class="mdi mdi-check"></span>
+          </div>
+          <span class="text-xs text-green-500 font-bold">已收貨</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div
+            class="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center shadow-lg shadow-brand-blue/30 relative z-10 ring-4 ring-dark-900">
+            <span class="mdi mdi-cog-refresh animate-spin"></span>
+          </div>
+          <span class="text-sm text-brand-blue font-bold">加工中</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full bg-dark-800 border-2 border-dark-600 text-gray-500 flex items-center justify-center shadow-lg relative z-10">
+            <span class="text-xs">5</span>
+          </div>
+          <span class="text-xs text-gray-500">完成加工</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-full bg-dark-800 border-2 border-dark-600 text-gray-500 flex items-center justify-center shadow-lg relative z-10">
+            <span class="text-xs">6</span>
+          </div>
+          <span class="text-xs text-gray-500">已出貨</span>
+        </div>
+      </div>
+
+
+      <div class="max-w-4xl mx-auto space-y-6">
+
+        <div class="opacity-60 hover:opacity-100 transition">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-0.5 h-full bg-green-900/50"></div>
+              <div
+                class="w-6 h-6 rounded-full bg-green-900 border border-green-600 flex items-center justify-center text-green-500 shrink-0 my-1">
+                <span class="mdi mdi-check text-xs"></span>
+              </div>
+              <div class="w-0.5 h-full bg-green-900/50"></div>
+            </div>
+            <div class="bg-dark-800 border border-green-900/30 rounded-lg p-4 flex-1">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="text-green-500 font-bold flex items-center gap-2">
+                  <span class="mdi mdi-truck-check-outline"></span> 上游廠商 (廠商 B) 已出貨
+                </h3>
+                <span class="text-xs text-gray-500">2025-12-05 09:30</span>
+              </div>
+              <div class="text-sm text-gray-400">
+                出貨單號: SH-20231205-01 <br>
+                數量: 1250 pcs
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="opacity-80">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-0.5 h-full bg-green-900/50"></div>
+              <div
+                class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center shrink-0 my-1 shadow-lg shadow-green-500/20">
+                <span class="mdi mdi-package-variant-closed"></span>
+              </div>
+              <div class="w-0.5 h-full bg-green-900/50"></div>
+            </div>
+            <div class="bg-dark-800 border border-green-600/50 rounded-lg p-5 flex-1 shadow-md">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-white font-bold text-lg">已收貨確認</h3>
+                <span
+                  class="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded border border-green-500/30">已完成</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 mb-3 bg-dark-900/50 p-3 rounded border border-dark-700">
+                <div>
+                  <div class="text-xs text-gray-500 mb-1">實收良品</div>
+                  <div class="text-lg font-mono text-green-400">1,248</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500 mb-1">不良品</div>
+                  <div class="text-lg font-mono text-red-400">2</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span class="mdi mdi-account-check"></span> 確認者: 張技師
+                <span class="mx-1">|</span>
+                <span class="mdi mdi-clock-outline"></span> 2025-12-05 10:15
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-0.5 h-full bg-green-900/50"></div>
+              <div
+                class="w-8 h-8 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 my-1 shadow-lg shadow-brand-blue/40 ring-4 ring-dark-900 animate-pulse">
+                <span class="mdi mdi-cog"></span>
+              </div>
+              <div class="w-0.5 h-full bg-dark-700 border-l-2 border-dotted border-gray-600"></div>
+            </div>
+            <div class="bg-dark-800 border-2 border-brand-blue rounded-xl p-6 flex-1 shadow-xl shadow-brand-blue/10">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="text-brand-blue font-bold text-xl flex items-center gap-2">
+                    <span class="mdi mdi-loading mdi-spin"></span>
+                    加工中 (Processing)
+                  </h3>
+                  <p class="text-sm text-gray-400 mt-1">目前正在進行 CNC 切削作業...</p>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">預計工時</div>
+                  <div class="text-lg font-bold text-white">5 天</div>
+                </div>
+              </div>
+              <div class="h-2 w-full bg-dark-700 rounded-full overflow-hidden">
+                <div class="h-full bg-brand-blue w-[45%]"></div>
+              </div>
+              <div class="text-right text-xs text-brand-blue mt-1">進度 45%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="opacity-100">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-0.5 h-8 bg-dark-700 border-l-2 border-dotted border-gray-600"></div>
+              <div
+                class="w-8 h-8 rounded-full bg-dark-700 border border-gray-500 text-gray-400 flex items-center justify-center shrink-0 my-1">
+                <span class="mdi mdi-pencil-box-outline"></span>
+              </div>
+              <div class="w-0.5 h-full bg-transparent"></div>
+            </div>
+
+            <div class="bg-dark-800 border border-dark-600 rounded-lg p-6 flex-1 shadow-lg relative">
+              <div class="mb-6 pb-4 border-b border-dark-700">
+                <h3 class="text-white font-bold text-lg">下一步：回報加工結果 (完成加工)</h3>
+                <p class="text-sm text-gray-500 mt-1">請在加工完成後，點擊下方輸入數量並確認。</p>
+              </div>
+
+              <form onsubmit="event.preventDefault(); alert('資料已送出！');" class="space-y-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="text-sm text-gray-400 font-bold flex items-center">
+                      <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> 良品數量 (Good)
+                    </label>
+                    <div class="relative">
+                      <input type="number"
+                        class="w-full bg-dark-900 border border-dark-600 text-white text-lg rounded-lg pl-4 pr-12 py-3 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition"
+                        placeholder="0">
+                      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">PCS</span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-sm text-gray-400 font-bold flex items-center">
+                      <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span> 不良品數量 (Defect)
+                    </label>
+                    <div class="relative">
+                      <input type="number"
+                        class="w-full bg-dark-900 border border-dark-600 text-white text-lg rounded-lg pl-4 pr-12 py-3 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition"
+                        placeholder="0">
+                      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">PCS</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-sm text-gray-400 font-bold">備註說明 (選填)</label>
+                  <textarea
+                    class="w-full bg-dark-900 border border-dark-600 text-white rounded-lg p-3 h-20 focus:border-brand-blue outline-none resize-none"
+                    placeholder="如有異常請說明..."></textarea>
+                </div>
+
+                <div class="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-4 mt-4">
+                  <div class="flex items-start gap-4">
+                    <div class="mt-1">
+                      <span class="mdi mdi-lock-alert text-2xl text-brand-blue"></span>
+                    </div>
+                    <div class="flex-1 space-y-3">
+                      <h4 class="text-brand-blue font-bold text-sm">安全確認</h4>
+                      <p class="text-xs text-gray-400">請輸入您的操作密碼以簽署此工單。確認後狀態將變更為「完成加工」。</p>
+
+                      <div class="relative">
+                        <span class="mdi mdi-key absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></span>
+                        <input type="password"
+                          class="w-full md:w-64 bg-dark-900 border border-dark-600 text-white rounded-lg pl-10 pr-4 py-2 focus:border-brand-blue outline-none"
+                          placeholder="請輸入操作密碼">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                  <button
+                    class="bg-brand-blue hover:bg-brand-hover text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-brand-blue/20 flex items-center transition transform active:scale-95">
+                    <span class="mdi mdi-check-all mr-2 text-lg"></span>
+                    確認回報並送出
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="opacity-40 grayscale">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-0.5 h-8 bg-dark-700 border-l-2 border-dotted border-gray-600"></div>
+              <div
+                class="w-8 h-8 rounded-full bg-dark-800 border border-gray-600 flex items-center justify-center shrink-0 my-1">
+                <span class="mdi mdi-truck-delivery"></span>
+              </div>
+            </div>
+            <div class="bg-dark-800 border border-dark-700 rounded-lg p-4 flex-1">
+              <h3 class="text-gray-400 font-bold">已出貨</h3>
+              <p class="text-xs text-gray-600 mt-1">此動作將觸發下游廠商狀態變更為「上游已出貨」。</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleSidebar() { /* Sidebar logic */ }
+  </script>
+  <script src="/js/app.js"></script>
+  <script src="/js/tailwind.js"></script>
+</body>
+
+</html>
