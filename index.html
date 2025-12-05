@@ -154,7 +154,7 @@
         // 3. 模擬短暫延遲後跳轉 (讓使用者感覺系統在處理)
         setTimeout(() => {
           // 重要：這裡會跳轉到你存好的 /views/main.html 檔案
-          window.location.href = '/views/main.html';
+          window.location.href = 'views/main.html';
         }, 800);
 
       } else if (user === 'partner' && pass === '123456') {
@@ -169,7 +169,7 @@
         // 3. 模擬短暫延遲後跳轉 (讓使用者感覺系統在處理)
         setTimeout(() => {
           // 廠商頁面
-          window.location.href = '/views/partners/partnersMain.html';
+          window.location.href = 'views/partners/partnersMain.html';
         }, 800);
 
       } else {
