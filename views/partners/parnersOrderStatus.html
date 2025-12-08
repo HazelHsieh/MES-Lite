@@ -47,6 +47,78 @@
       background-color: #3b82f6;
     }
   </style>
+  <script>
+    // tailwind
+
+    // tailwind.config = {
+    //   theme: {
+    //     extend: {
+    //       colors: {
+    //         dark: {
+    //           900: '#1a222c', // 背景深色
+    //           800: '#24303f', // 卡片背景
+    //           700: '#2d3b4e', // 側邊欄背景
+    //           600: '#3d4d63', // 邊框/Hover
+    //         },
+    //         // 新增廠商版專用顏色 (Vendor Theme)
+    //         vendor: {
+    //           // sidebar: '#393e4e', // 廠商版側邊欄背景 (深藍)
+    //           // bg: '#ffffff',
+    //           background: '#dbdcdf',
+    //           // hover: '#2563eb',   // 廠商版 hover 顏色 (亮藍)
+    //           // active: '#3b82f6',  // 廠商版 active 顏色 (更亮藍)
+    //           // border: '#172554',  // 廠商版邊框色 (更深藍)
+    //         },
+    //         accent: {
+    //           green: '#10b981',
+    //           yellow: '#fbbf24',
+    //           blue: '#3b82f6',
+    //           danger: '#ef4444'
+    //         },
+    //         brand: {
+    //           blue: '#3b82f6',
+    //           hover: '#2563eb'
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+
+    // tailwind
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // 亮色系定義 (Light Theme)
+            dark: {
+              // 900: '#f9fafb', // 背景改為極淺灰 (Gray-50)
+              // 800: '#ffffff', // 卡片背景改為純白
+              700: '#e5e7eb', // 邊框改為淺灰 (Gray-200)
+              600: '#d1d5db', // 次要邊框 (Gray-300)
+            },
+            // 廠商版專用顏色 (亮色版)
+            // #131B2E
+            vendor: {
+              sidebar: '#131B2E', // 側邊欄
+              // bg: '#131B2E',      // Header 
+              // hover: '#eff6ff',   // 亮藍 Hover
+            },
+            accent: {
+              green: '#10b981',
+              yellow: '#f59e0b',
+              blue: '#3b82f6',
+              danger: '#ef4444'
+            },
+            brand: {
+              blue: '#2563eb', // 加深一點藍色，在亮底上更清晰
+              hover: '#1d4ed8'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
 <body class="bg-dark-900 text-gray-300 h-screen flex overflow-hidden selection:bg-brand-blue selection:text-white">
@@ -59,7 +131,7 @@
     </button>
 
     <div class="h-16 flex items-center px-5 border-b bg-vendor-bg overflow-hidden whitespace-nowrap">
-      <a href="">
+      <a href="partnersMain.html">
         <span class="mdi mdi-factory text-xl text-blue-400 mr-3 shrink-0"></span>
         <span class="nav-text font-bold text-lg text-white tracking-wider">MES Lite</span>
         <span class="nav-text text-xs text-white ml-2 mt-1 border border-slate-200 px-1 rounded">廠商版</span>
@@ -92,6 +164,7 @@
         </div>
         <div class="ml-3 nav-text">
           <div class="text-sm font-bold text-white">廠商 B</div>
+
           <div class="text-xs text-gray-500">MES Lite</div>
         </div>
       </div>
@@ -112,38 +185,36 @@
           </button>
 
           <div id="notif-menu"
-            class="hidden absolute right-0 mt-3 w-80 bg-dark-800 border border-dark-600 rounded-lg shadow-xl overflow-hidden z-50">
-            <div class="px-4 py-3 border-b border-dark-600 text-white font-bold">
+            class="hidden absolute right-0 mt-3 w-80 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-50">
+            <div class="px-4 py-3 border-b border-gray-200 text-gray-800 font-bold bg-gray-50">
               通知中心
             </div>
-
             <ul class="max-h-64 overflow-y-auto">
               <li class="px-4 py-3 hover:bg-dark-700 cursor-pointer border-b border-dark-600/50">
                 <div class="flex justify-between items-start">
-                  <span class="text-sm text-gray-200 font-medium">新訂單 #12345 已建立</span>
-                  <span class="w-2 h-2 bg-teal-400 rounded-full mt-1.5"></span>
+                  <span class="text-sm text-gray-800 font-medium">新訂單 #12345 已建立</span>
+                  <span class="w-2 h-2 bg-blue-400 rounded-full mt-1.5"></span>
                 </div>
                 <div class="text-xs text-gray-500 mt-1">5 分鐘前</div>
               </li>
 
               <li class="px-4 py-3 hover:bg-dark-700 cursor-pointer border-b border-dark-600/50">
                 <div class="flex justify-between items-start">
-                  <span class="text-sm text-gray-200 font-medium">生產線 A 即將完成</span>
-                  <span class="w-2 h-2 bg-teal-400 rounded-full mt-1.5"></span>
+                  <span class="text-sm text-gray-800 font-medium">生產線 A 即將完成</span>
+                  <span class="w-2 h-2 bg-blue-400 rounded-full mt-1.5"></span>
                 </div>
                 <div class="text-xs text-gray-500 mt-1">15 分鐘前</div>
               </li>
 
               <li class="px-4 py-3 hover:bg-dark-700 cursor-pointer">
                 <div class="flex justify-between items-start">
-                  <span class="text-sm text-gray-400">物料庫存低於安全值</span>
+                  <span class="text-sm text-gray-800">物料庫存低於安全值</span>
                 </div>
                 <div class="text-xs text-gray-500 mt-1">1 小時前</div>
               </li>
             </ul>
-
-            <div class="border-t border-dark-600">
-              <button class="w-full py-2 text-sm text-teal-400 hover:text-teal-300 hover:bg-dark-700 transition">
+            <div class="border-t border-gray-200">
+              <button class="w-full py-2 text-sm text-brand-blue hover:text-blue-700 hover:bg-gray-50 transition">
                 查看全部通知
               </button>
             </div>
@@ -152,27 +223,27 @@
 
         <div class="relative">
           <div id="user-btn"
-            class="flex items-center gap-2 cursor-pointer hover:bg-dark-700 p-1.5 rounded-lg transition select-none">
-            <div class="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm">
+            class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-lg transition select-none">
+            <div
+              class="w-8 h-8 rounded-full bg-brand-blue flex items-center justify-center text-white text-sm shadow-md">
               <span class="mdi mdi-account"></span>
             </div>
-            <span class="text-sm text-gray-300">廠商 B</span>
-            <span class="mdi mdi-chevron-down text-gray-500 transition-transform duration-200" id="user-chevron"></span>
+            <span class="text-sm text-gray-700 font-medium">廠商 B</span>
+            <span class="mdi mdi-chevron-down text-gray-400 transition-transform duration-200" id="user-chevron"></span>
           </div>
-
           <div id="user-menu"
-            class="hidden absolute right-0 mt-3 w-48 bg-dark-800 border border-dark-600 rounded-lg shadow-xl overflow-hidden z-50">
+            class="hidden absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-50">
             <ul class="py-1">
               <li>
                 <a href="#"
-                  class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-dark-700 hover:text-white">
+                  class="flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-brand-blue">
                   <span class="mdi mdi-lock-outline mr-2 text-lg"></span>
                   修改密碼
                 </a>
               </li>
               <li>
                 <button onclick="handlePartnersPLogout()"
-                  class="w-full flex items-center px-4 py-2 text-sm text-red-500 hover:bg-dark-700 hover:text-red-400 text-left">
+                  class="w-full flex items-center px-4 py-2 text-sm text-red-500 hover:bg-red-50 text-left">
                   <span class="mdi mdi-logout mr-2 text-lg"></span>
                   登出
                 </button>
@@ -185,11 +256,11 @@
     <div class="h-16 bg-dark-800 border-b border-dark-700 flex gap-4 items-center px-6 shadow-md z-10">
       <a href="partnersMain.html"
         class="p-1 rounded-full hover:bg-dark-700 transition cursor-pointer flex items-center justify-center">
-        <span class="mdi mdi-arrow-left text-xl"></span>
+        <span class="mdi mdi-arrow-left text-xl text-gray-800"></span>
       </a>
       <div class="flex items-center gap-4">
         <div>
-          <h1 class="text-lg font-bold text-white flex items-center gap-2">
+          <h1 class="text-lg font-bold text-gray-800 flex items-center gap-2">
             WO-20231205-B
             <span
               class="px-2 py-0.5 rounded text-xs font-normal bg-brand-blue/20 text-brand-blue border border-brand-blue/30">生產中</span>
@@ -199,54 +270,129 @@
       </div>
     </div>
     <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-      <div class="flex justify-between items-center relative mb-10 px-4">
-        <div class="absolute top-1/2 left-0 w-full h-1 bg-dark-700 -z-10 rounded"></div>
-        <div class="absolute top-1/2 left-0 w-1/2 h-1 bg-brand-blue -z-10 rounded"></div>
 
-        <div class="flex flex-col items-center gap-2">
-          <div
-            class="w-8 h-8 rounded-full bg-dark-900 border-2 border-green-500 text-green-500 flex items-center justify-center shadow-lg relative z-10">
-            <span class="mdi mdi-check"></span>
+
+      <!--  -->
+      <div class="flex w-full mb-8 overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+
+        <div class="flex-1 bg-green-50 py-3 px-2 text-center border-r border-green-100 relative overflow-hidden">
+          <div class="text-green-600 font-bold text-xs flex items-center justify-center gap-1">
+            <span class="mdi mdi-check-circle"></span> 上游進行
           </div>
-          <span class="text-xs text-green-500 font-bold">上游進行中</span>
-        </div>
-        <div class="flex flex-col items-center gap-2">
           <div
-            class="w-8 h-8 rounded-full bg-dark-900 border-2 border-green-500 text-green-500 flex items-center justify-center shadow-lg relative z-10">
-            <span class="mdi mdi-check"></span>
+            class="absolute top-0 right-0 h-full w-4 bg-green-50 transform translate-x-2 skew-x-[-20deg] border-r border-white z-10">
           </div>
-          <span class="text-xs text-green-500 font-bold">上游已出貨</span>
         </div>
-        <div class="flex flex-col items-center gap-2">
-          <div
-            class="w-8 h-8 rounded-full bg-dark-900 border-2 border-green-500 text-green-500 flex items-center justify-center shadow-lg relative z-10">
-            <span class="mdi mdi-check"></span>
+
+        <div class="flex-1 bg-green-50 py-3 px-2 text-center border-r border-green-100 relative">
+          <div class="text-green-600 font-bold text-xs flex items-center justify-center gap-1">
+            <span class="mdi mdi-check-circle"></span> 上游出貨
           </div>
-          <span class="text-xs text-green-500 font-bold">已收貨</span>
         </div>
-        <div class="flex flex-col items-center gap-2">
-          <div
-            class="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center shadow-lg shadow-brand-blue/30 relative z-10 ring-4 ring-dark-900">
-            <span class="mdi mdi-cog-refresh animate-spin"></span>
+
+        <div class="flex-1 bg-green-50 py-3 px-2 text-center border-r border-green-100 relative">
+          <div class="text-green-600 font-bold text-xs flex items-center justify-center gap-1">
+            <span class="mdi mdi-check-circle"></span> 已收貨
           </div>
-          <span class="text-sm text-brand-blue font-bold">加工中</span>
         </div>
-        <div class="flex flex-col items-center gap-2">
-          <div
-            class="w-8 h-8 rounded-full bg-dark-800 border-2 border-dark-600 text-gray-500 flex items-center justify-center shadow-lg relative z-10">
-            <span class="text-xs">5</span>
+
+        <div class="flex-1 bg-brand-blue py-3 px-2 text-center relative shadow-lg z-10 transform scale-105 rounded-md">
+          <div class="text-white font-bold text-sm flex items-center justify-center gap-2">
+            <span class="mdi mdi-loading mdi-spin"></span> 加工中
           </div>
-          <span class="text-xs text-gray-500">完成加工</span>
+          <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-brand-blue rotate-45"></div>
         </div>
-        <div class="flex flex-col items-center gap-2">
-          <div
-            class="w-8 h-8 rounded-full bg-dark-800 border-2 border-dark-600 text-gray-500 flex items-center justify-center shadow-lg relative z-10">
-            <span class="text-xs">6</span>
-          </div>
-          <span class="text-xs text-gray-500">已出貨</span>
+
+        <div class="flex-1 bg-gray-50 py-3 px-2 text-center border-r border-gray-200 relative text-gray-400">
+          <div class="text-xs font-medium">完成加工</div>
         </div>
+
+        <div class="flex-1 bg-gray-50 py-3 px-2 text-center relative text-gray-400">
+          <div class="text-xs font-medium">已出貨</div>
+        </div>
+
       </div>
 
+      <!-- 藥丸式進度條 (Pill Steps) -->
+      <!-- 
+      
+      <div class="flex items-center w-full mb-8">
+  
+  <div class="flex-1 relative group">
+    <div class="flex items-center">
+      <div class="flex-1 h-2 bg-green-500 rounded-l-full"></div> </div>
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 text-center w-max">
+      <div class="w-6 h-6 mx-auto bg-green-500 rounded-full flex items-center justify-center text-white text-xs mb-1 shadow-sm">
+        <span class="mdi mdi-check"></span>
+      </div>
+      <span class="text-xs font-bold text-green-600 block">上游進行中</span>
+    </div>
+  </div>
+
+  <div class="flex-1 relative group">
+    <div class="flex items-center">
+      <div class="flex-1 h-2 bg-green-500"></div>
+    </div>
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 text-center w-max">
+      <div class="w-6 h-6 mx-auto bg-green-500 rounded-full flex items-center justify-center text-white text-xs mb-1 shadow-sm">
+        <span class="mdi mdi-check"></span>
+      </div>
+      <span class="text-xs font-bold text-green-600 block">上游已出貨</span>
+    </div>
+  </div>
+
+  <div class="flex-1 relative group">
+    <div class="flex items-center">
+      <div class="flex-1 h-2 bg-green-500"></div>
+    </div>
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 text-center w-max">
+      <div class="w-6 h-6 mx-auto bg-green-500 rounded-full flex items-center justify-center text-white text-xs mb-1 shadow-sm">
+        <span class="mdi mdi-check"></span>
+      </div>
+      <span class="text-xs font-bold text-green-600 block">已收貨</span>
+    </div>
+  </div>
+
+  <div class="flex-1 relative group">
+    <div class="flex items-center">
+      <div class="w-1/2 h-2 bg-green-500"></div>
+      <div class="w-1/2 h-2 bg-gray-200"></div>
+    </div>
+    <div class="absolute top-3 left-1/2 -translate-x-1/2 text-center w-max">
+      <div class="w-8 h-8 mx-auto bg-brand-blue rounded-full flex items-center justify-center text-white text-lg shadow-lg shadow-blue-200 ring-4 ring-white mb-1">
+        <span class="mdi mdi-cog animate-spin"></span>
+      </div>
+      <span class="text-sm font-bold text-brand-blue block">加工中</span>
+    </div>
+  </div>
+
+  <div class="flex-1 relative group">
+    <div class="flex items-center">
+      <div class="flex-1 h-2 bg-gray-200"></div>
+    </div>
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 text-center w-max">
+      <div class="w-6 h-6 mx-auto bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs mb-1">
+        5
+      </div>
+      <span class="text-xs text-gray-400 block">完成加工</span>
+    </div>
+  </div>
+
+  <div class="flex-1 relative group">
+    <div class="flex items-center">
+      <div class="flex-1 h-2 bg-gray-200 rounded-r-full"></div> </div>
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 text-center w-max">
+      <div class="w-6 h-6 mx-auto bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs mb-1">
+        6
+      </div>
+      <span class="text-xs text-gray-400 block">已出貨</span>
+    </div>
+  </div>
+
+</div>
+      
+      
+      -->
 
       <div class="max-w-4xl mx-auto space-y-6">
 
@@ -448,11 +594,46 @@
     </div>
   </main>
 
+
+
+
   <script>
-    function toggleSidebar() { /* Sidebar logic */ }
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const navTexts = document.querySelectorAll('.nav-text');
+      const icon = document.getElementById('toggleIcon');
+
+      // 檢查目前是否展開 (w-64)
+      const isExpanded = sidebar.classList.contains('w-64');
+
+      if (isExpanded) {
+        // 收合
+        sidebar.classList.remove('w-64');
+        sidebar.classList.add('w-20');
+
+        // 隱藏文字
+        navTexts.forEach(el => el.classList.add('hidden'));
+
+        // 箭頭轉向
+        icon.classList.remove('mdi-chevron-left');
+        icon.classList.add('mdi-chevron-right');
+      } else {
+        // 展開
+        sidebar.classList.remove('w-20');
+        sidebar.classList.add('w-64');
+
+        // 顯示文字 (用 setTimeout 稍微延遲讓寬度動畫先跑一點，避免文字擠壓)
+        setTimeout(() => {
+          navTexts.forEach(el => el.classList.remove('hidden'));
+        }, 100);
+
+        // 箭頭轉向
+        icon.classList.remove('mdi-chevron-right');
+        icon.classList.add('mdi-chevron-left');
+      }
+    }
   </script>
   <script src="../../js/app.js"></script>
-  <script src="../../js/tailwind.js"></script>
 </body>
 
 </html>
